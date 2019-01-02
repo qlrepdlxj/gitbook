@@ -94,13 +94,13 @@ trace = go.Pie(labels=labels, values=values)
 offline.iplot([trace], filename='basic_pie_chart')
 ```
 
-```javascript
+
 <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script><script type="text/javascript">if (window.MathJax) {MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script><script>requirejs.config({paths: { 'plotly': ['https://cdn.plot.ly/plotly-latest.min']},});if(!window._Plotly) {require(['plotly'],function(plotly) {window._Plotly=plotly;});}</script>
 
 
 
 <div id="07bf964d-8919-4a0d-99a7-e524ad271d94" style="height: 525px; width: 100%;" class="plotly-graph-div"></div><script type="text/javascript">require(["plotly"], function(Plotly) { window.PLOTLYENV=window.PLOTLYENV || {};window.PLOTLYENV.BASE_URL="https://plot.ly";Plotly.newPlot("07bf964d-8919-4a0d-99a7-e524ad271d94", [{"labels": ["\uc2e0\uacfc\ud568\uaed8-\uc8c4\uc640 \ubc8c", "1987", "\uac15\ucca0\ube44", "\uc704\ub300\ud55c \uc1fc\ub9e8", "\uadf9\uc7a5\ud310 \ud3ec\ucf13\ubaac\uc2a4\ud130 \ub108\ub85c \uc815\ud588\ub2e4!", "\ubaac\uc2a4\ud130 \ud328\ubc00\ub9ac", "\uc6d0\ub354", "\ubf40\ub85c\ub85c \uadf9\uc7a5\ud310 \uacf5\ub8e1\uc12c \ub300\ubaa8\ud5d8", "\uadf9\uc7a5\ud310 \ud504\ub9ac\ud30c\ub77c \ubaa8\ub450\uc758 \ub3d9\uacbd\u266a \ub81b\uce20\uace0\u2606\ud504\ub9ac\ud30c\ub9ac", "\uc2a4\ud0c0\uc6cc\uc988: \ub77c\uc2a4\ud2b8 \uc81c\ub2e4\uc774"], "values": ["7715149100", "4460462100", "944228600", "509947700", "262886500", "205793300", "158549600", "109207600", "47882900", "35090500"], "type": "pie", "uid": "8a120f9a-f8db-4461-b1af-33ac15011c52"}], {}, {"showLink": true, "linkText": "Export to plot.ly", "plotlyServerURL": "https://plot.ly"})});</script><script type="text/javascript">window.addEventListener("resize", function(){window._Plotly.Plots.resize(document.getElementById("07bf964d-8919-4a0d-99a7-e524ad271d94"));});</script>
-```
+
 
 ```python
 #-*- coding: utf-8 -*-
@@ -194,6 +194,6 @@ data=[trace]
 offline.iplot(data)
 ```
 
-```
+
 <div id="d12d4fc9-d429-491e-bcf6-b3442873a0a1" style="height: 525px; width: 100%;" class="plotly-graph-div"></div><script type="text/javascript">require(["plotly"], function(Plotly) { window.PLOTLYENV=window.PLOTLYENV || {};window.PLOTLYENV.BASE_URL="https://plot.ly";Plotly.newPlot("d12d4fc9-d429-491e-bcf6-b3442873a0a1", [{"x": ["2017-01-01", "2017-01-02", "2017-01-03", "2017-01-04", "2017-01-05", "2017-01-06", "2017-01-07", "2017-01-08", "2017-01-09", "2017-01-10", "2017-01-11", "2017-01-12", "2017-01-13", "2017-01-14", "2017-01-15", "2017-01-16", "2017-01-17", "2017-01-18", "2017-01-19", "2017-01-20", "2017-01-21", "2017-01-22", "2017-01-23", "2017-01-24", "2017-01-25", "2017-01-26", "2017-01-27", "2017-01-28", "2017-01-29", "2017-01-30", "2017-01-31"], "y": [1079312, 429079, 354356, 524319, 472716, 529040, 1050318, 984339, 361874, 366937, 387775, 390926, 438353, 958710, 931352, 291145, 297278, 626383, 541489, 575217, 1252975, 1243345, 413530, 418223, 590581, 651238, 1088636, 1365896, 1662892, 1604649, 609035], "type": "bar", "uid": "a2f6d113-a6f8-43ae-9f81-b2fda2b6a882"}], {}, {"showLink": true, "linkText": "Export to plot.ly", "plotlyServerURL": "https://plot.ly"})});</script><script type="text/javascript">window.addEventListener("resize", function(){window._Plotly.Plots.resize(document.getElementById("d12d4fc9-d429-491e-bcf6-b3442873a0a1"));});</script>
-```
+
