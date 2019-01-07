@@ -18,7 +18,7 @@
     
     6. [6. 결론 도출](6.md)
     
-* [참고 자료](7.md)
+* [링크](7.md)
 
 * [네이버 영화 리뷰 분석 - 테스트](8.md)
 
@@ -26,3 +26,18 @@
 
 * [시각화 예제 2](10.md)
 
+* [참고 자료](7.md)
+
+    -[AWS](AWS.md)
+    
+    -[DDNS](DDNS.md)
+    
+    -[DOCKER](DOCKER.md)
+    
+    -[GIT](GIT.md)
+    
+    -[JUPYTER-NOTEBOOK](JUPYTER-NOTEBOOK.md)
+    
+    -[NETWORK](NETWORK.md)
+    
+    -[REF](REF.md)
