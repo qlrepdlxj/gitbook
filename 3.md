@@ -1,129 +1,314 @@
 
-### 3. 데이터 가공
+# 3. KOBIS OPEN API
+
+영화관 입장권 통합 전산망 OPENAPI를 사용하여 일일 박스오피스 자료를 가져오고 JSON파일로 저장
+
+##  1) 일별 박스오피스
+kobis에서 일별박스오피스 api를 활용하여 movieCd, movieNm, openDt, salesAmt, salesShare, salesInten, salesChange, salesAcc, audiCnt, audiInten, audiChange, audiAcc, scrnCnt, showCnt, CurrentDate, Nation 을 추출
+
+##  2) 영화 상세정보
+kobis에서 영화상세정보 api를 활용하여 movieCd, movieNm, movieNmEn, movieNmOg, showTm, prdtYear, openDt, prdtStatNm, typeNm, nations, genres, directors, actors 를 추출 = movie_info.txt
 
 
-#### 3.1 데이터 추출 및 정제
+.
 
-> API 요청을 통해 일별 박스오피스 정보를 저장함
+.
 
-> 트위터 크롤링을 통해 해당 영화에 대한 의견을 저장하고 해당 의견이 긍정인지 부정인지 파악함
+# 3.1 일별 박스오피스
 
-
-
-#### 3.2 데이터 병합
-
-> JSON 파일을 CSV 파일로 병합한 뒤 데이터베이스에 입력 
+### 1) kobis API를 통해 일별 박스오피스 데이터를 받아온다. 
+###     파일은' 해당일자'를 이름으로 지정하고
+###     JSON 타입으로 저장한다.
 
 
+```python
+import os
+import requests
+import json
+import calendar
+from tqdm import tqdm
+from tqdm import tqdm_notebook
+from datetime import date, timedelta
 
-#### 3.3 데이터 포맷 변환
+key='ad816991534afeaef71f07e7336b0d61'
+movie_info_path='/home/ubuntu/miniii_su/movie/'
+```
 
-> 3.2의 과정에서 적절한 형식으로 데이터 변환
+```python
+def daily_box_office_to_json(start_date,end_date):    
+    tmp_date = start_date
+#     startDt = int(str(start_date)[0:4]+str(start_date)[5:7]+str(start_date)[8:10])
+#     endDt = int(str(end_date)[0:4]+str(end_date)[5:7]+str(end_date)[8:10])
+    days = end_date - start_date # 날짜 경과
+    for i in tqdm_notebook(range(days.days+1)):
+        targetDt = int(str(tmp_date)[0:4]+str(tmp_date)[5:7]+str(tmp_date)[8:10])
+        
+        if(os.path.isfile(movie_info_path+'raw_data/'+str(targetDt)+'.json')!=1):
+            url='http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key='+key+'&targetDt='+str(targetDt)
+            res = requests.get(url)
+            text = res.text
+            d = json.loads(text)
+            with open(movie_info_path+'raw_data/daily'+'/'+str(targetDt)+'.json', 'w', encoding="utf-8") as make_file:
+                json.dump(d, make_file, ensure_ascii=False, indent="\t")
+        tmp_date += timedelta(1)
+```
+
+```python
+
+```
+
+### 3) daliy_box_office_to_json 사용자 함수 실행한다.
+
+```python
+# 2017년 01월 ~ 2018년 02월까지 boxoffice 를 받아온다.
+start_date = date(2017,1,1)
+end_date = date(2018,2,28)
+daily_box_office_to_json(start_date,end_date)
+```
 
 
+    HBox(children=(IntProgress(value=0, max=424), HTML(value='')))
 
-#### 3.4 데이터를 DB에 삽입
 
-> CSV 파일을 데이터베이스에 삽입
+```python
 
+```
+
+### 4) 일별 데이터를 분석할 때 용이하도록 월별로 합친다.
 
 ```python
 import pandas as pd
 import requests
-import datetime
+from datetime import datetime
+from datetime import timedelta
 import json
 from tqdm import tqdm_notebook
 from dateutil.relativedelta import relativedelta
 
-my_date = datetime.date(2017, 1, 1)
+key='ad816991534afeaef71f07e7336b0d61'
+movie_info_path='/home/ubuntu/miniii_su/movie/'
 ```
 
 ```python
-#일별 데이터  : csv로 저장 함수 정의 
-
-#mykey= '430156241533f1d058c603178cc3ca0e' #kobis에서 key 발급
-#mykey='4aa9ba2ba5fd74d34df70439d3b483db'
-mykey='aec9e1bc0c849c607bac8a03d6bdb25e' #내 키 일일 조회수 초과해서 예시에 있는 키
-
-def daliy_boxoffice(start_date, end_date, keys =mykey) :
+def daily_boxoffice(start_date, end_date) :
     
     final_list = []
-    url = 'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json'
 
     for single_date in tqdm_notebook(pd.date_range(start_date, end_date)) :
-        for rep in ["","K", "F"] :            
-            dic={
-            'key' : keys,
-            'targetDt' : single_date.strftime('%Y%m%d'),
-            'itemPerPage' : '10', 
-            'repNationCd' : rep #한국영화 K, 외국영화 F
-            }
-            
-            req = requests.get(url, params = dic)           
-            text = req.text
-            d = json.loads(text) 
-            
-            for item in d["boxOfficeResult"]["dailyBoxOfficeList"] :
-                value_list = []
-                key_list = []
-                for key, value in item.items() :
-                    key_list.append(key)
-                    value_list.append(value)
-                    
-                value_list.append(single_date)
-                key_list.append('CurrentDate')
-                
-                value_list.append(rep)
-                key_list.append('Nation')
-            
-                final_list.append(value_list)
+        targetDt = str(single_date)[0:4]+str(single_date)[5:7]+str(single_date)[8:10]
+        with open(movie_info_path+'raw_data/daily/'+str(targetDt)+'.json', 'r', encoding="utf-8") as read_file:
+            d = json.load(read_file)
 
-    return pd.DataFrame(final_list, columns=key_list)     # final_list에 담긴 내용을 df로 반환
+        for item in d["boxOfficeResult"]["dailyBoxOfficeList"] :
+            value_list = []
+            key_list = []
+            for key, value in item.items() :
+                key_list.append(key)
+                value_list.append(value)
+
+            value_list.append(single_date)
+            key_list.append('CurrentDate')
+            final_list.append(value_list)
+
+    return pd.DataFrame(final_list, columns=key_list)
 ```
 
 ```python
-#일별 박스 오피스를 월별로 추출, 영화코드 리스트 추출 ###ok
+my_date = date(2017, 1, 1)
 movie_code_list_all=pd.DataFrame()
-for i in tqdm_notebook(range(1)):
+for i in tqdm_notebook(range(14)): # 14개월 추출이라서 range(14)
     start_date = my_date + relativedelta(months=i)
-    end_date = start_date+ relativedelta(months=1) - datetime.timedelta(days=1)
+    end_date = start_date + relativedelta(months=1) - timedelta(days=1)
     
-    daliy_boxoffice_data = daliy_boxoffice(start_date, end_date, keys=mykey)
+    daily_boxoffice_data = daily_boxoffice(start_date, end_date)
     startdate=start_date.strftime('%Y%m%d')
-    
     enddate=end_date.strftime('%Y%m%d')
     
-    movie_code_list = pd.DataFrame({'movieCd' :daliy_boxoffice_data.movieCd.drop_duplicates(), 'movieNm':daliy_boxoffice_data.movieNm.drop_duplicates(), 'director':'','Rate' : 0})
+    movie_code_list = pd.DataFrame({'movieCd' :daily_boxoffice_data.movieCd.drop_duplicates(), 'movieNm':daily_boxoffice_data.movieNm.drop_duplicates(), 'director':'','Rate' : 0})
     
     
-    daliy_boxoffice_data.to_csv("daliy_boxoffice_data_"+startdate+"~"+enddate+".csv", index=False)
-    movie_code_list.to_csv("movie_code_list_"+startdate+"~"+enddate+".csv", index=False)
+    daily_boxoffice_data.to_csv(movie_info_path+"data/"+"daily_"+startdate+"~"+enddate+".csv", index=False)
+    
     
     movie_code_list_all = movie_code_list.append(movie_code_list_all)
     movie_code_list_all = movie_code_list_all.drop_duplicates()
-    movie_code_list_all.to_csv("movie_code_list_all.csv", index=False)
+    movie_code_list_all.to_csv(movie_info_path+"data/"+"movie_code_list_all.csv", index=False)
 ```
 
 
-    A Jupyter Widget
+    HBox(children=(IntProgress(value=0, max=14), HTML(value='')))
 
 
 
-    A Jupyter Widget
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
 
 
-    
+
+    HBox(children=(IntProgress(value=0, max=28), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=30), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=30), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=30), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=30), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=31), HTML(value='')))
+
+
+
+    HBox(children=(IntProgress(value=0, max=28), HTML(value='')))
 
 
 ```python
+movie_code_list_all.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>movieCd</th>
+      <th>movieNm</th>
+      <th>director</th>
+      <th>Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>20168323</td>
+      <td>염력</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>20176104</td>
+      <td>그것만이 내 세상</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>20178126</td>
+      <td>인시디어스4: 라스트 키</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>20179985</td>
+      <td>코코</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>20150976</td>
+      <td>신과함께-죄와 벌</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+
+```
+
+```python
+
+```
+
+### 5) 일일 데이터를 하나로 합치기
+
+
+```python
+# start_date = date(2017,1,1)
+# end_date = date(2018,2,28)
+# a = daily_boxoffice(start_date, end_date)
+# a
+```
+
+```python
+
+```
+
+```python
+
+```
+
+# 3.2 영화 상세정보 
+
+### 1) kobis API를 통해 영화 정보 데이터를 받아온다.
+### 파일 이름은 movie_info 이고
+### csv 파일 형식으로 저장한다.
+
+```python
 #영화데이터  : txt 로 저장 함수 정의
-def movie_data(lists, keys = mykey) :    
+def movie_data(lists) :    
     dict_list = dict()
     url = 'http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json'
     
     for movie in lists :
         #print(movie)
-        dic={ 'key' : keys, 'movieCd' : movie}        
+        dic={ 'key' : key, 'movieCd' : movie}        
         req = requests.get(url, params = dic)
         
         dict_list[movie] = req.json()['movieInfoResult']['movieInfo'] #dict_list[movie] 가 있어야 append형식으로 됨. 없으면 마지막것만 추출
@@ -131,108 +316,19 @@ def movie_data(lists, keys = mykey) :
 ```
 
 ```python
-movie_info=movie_data(movie_code_list_all.movieCd,keys=mykey) 
-with open('movie_info.txt', 'w', encoding='utf-8') as outfile:   #딕셔너리를 json으로 저장
+movie_info=movie_data(movie_code_list_all.movieCd) 
+with open(movie_info_path+'raw_data/movie_info/movie_info.txt', 'w', encoding='utf-8') as outfile:   #딕셔너리를 json으로 저장
     json.dump(movie_info, outfile, ensure_ascii=False)
 ```
 
 ```python
-#movie_info의  director를 뽑아서 movie_code_list에 넣기
-movie_info_keys=list(movie_info.keys())
-movie_info_keys
+
 ```
 
-
-
-
-    ['20161725',
-     '20163183',
-     '20162025',
-     '20144641',
-     '20167904',
-     '20161872',
-     '20162727',
-     '20162183',
-     '20152371',
-     '20165285',
-     '20154661',
-     '20161701',
-     '20161603',
-     '20162545',
-     '20159286',
-     '20164527',
-     '20153401',
-     '20161763',
-     '20165543',
-     '19890291',
-     '20150966',
-     '20165925',
-     '20080893',
-     '20160221',
-     '20163014',
-     '20151181',
-     '20154342',
-     '20155223',
-     '20167286',
-     '20161084',
-     '20165153',
-     '20145486',
-     '20165061',
-     '20164485',
-     '20151228',
-     '20165144',
-     '20101406',
-     '20151229',
-     '19880070',
-     '19688044',
-     '20110014',
-     '20157631',
-     '20160261',
-     '20164421',
-     '20168381',
-     '20168324',
-     '20163845',
-     '20168246',
-     '20167127',
-     '20165443',
-     '20160881',
-     '20149384',
-     '20155700',
-     '19600018',
-     '20168664',
-     '20163186',
-     '20010130',
-     '20167324',
-     '20168104',
-     '20168086',
-     '20168088',
-     '20168087',
-     '20166421',
-     '20167644',
-     '20168154',
-     '20179481',
-     '20158482',
-     '20168688',
-     '20167285',
-     '20158799',
-     '19598036',
-     '20168689',
-     '20165822',
-     '20168611',
-     '20168366',
-     '19820052',
-     '20166707',
-     '19730023',
-     '20150964']
-
-
+### 2)  movie_code_list_all 에 dirctors 삽입
 
 ```python
-for i in range(len(movie_code_list_all)):
-    movie_code_list_all.iloc[i,1]=movie_info[movie_info_keys[i]]['directors'][0]['peopleNm']
-```
-
-```python
+movie_code_list_all.reset_index(drop=True, inplace=True)
 movie_code_list_all
 ```
 
@@ -240,239 +336,239 @@ movie_code_list_all
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Rate</th>
-      <th>director</th>
       <th>movieCd</th>
       <th>movieNm</th>
+      <th>director</th>
+      <th>Rate</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
+      <td>20168323</td>
+      <td>염력</td>
+      <td></td>
       <td>0</td>
-      <td>조의석</td>
-      <td>20161725</td>
-      <td>마스터</td>
     </tr>
     <tr>
       <th>1</th>
+      <td>20176104</td>
+      <td>그것만이 내 세상</td>
+      <td></td>
       <td>0</td>
-      <td>가렛 에드워즈</td>
-      <td>20163183</td>
-      <td>로그 원: 스타워즈 스토리</td>
     </tr>
     <tr>
       <th>2</th>
+      <td>20178126</td>
+      <td>인시디어스4: 라스트 키</td>
+      <td></td>
       <td>0</td>
-      <td>가스 제닝스</td>
-      <td>20162025</td>
-      <td>씽</td>
     </tr>
     <tr>
       <th>3</th>
+      <td>20179985</td>
+      <td>코코</td>
+      <td></td>
       <td>0</td>
-      <td>박정우</td>
-      <td>20144641</td>
-      <td>판도라</td>
     </tr>
     <tr>
       <th>4</th>
+      <td>20150976</td>
+      <td>신과함께-죄와 벌</td>
+      <td></td>
       <td>0</td>
-      <td>데이미언 셔젤</td>
-      <td>20167904</td>
-      <td>라라랜드</td>
     </tr>
     <tr>
       <th>5</th>
+      <td>20175054</td>
+      <td>메이즈 러너: 데스 큐어</td>
+      <td></td>
       <td>0</td>
-      <td>신카이 마코토</td>
-      <td>20161872</td>
-      <td>너의 이름은.</td>
     </tr>
     <tr>
       <th>6</th>
+      <td>20178395</td>
+      <td>12 솔져스</td>
+      <td></td>
       <td>0</td>
-      <td>유야마 쿠니히코</td>
-      <td>20162727</td>
-      <td>루돌프와 많이있어</td>
     </tr>
     <tr>
       <th>7</th>
+      <td>20170590</td>
+      <td>1987</td>
+      <td></td>
       <td>0</td>
-      <td>유야마 쿠니히코</td>
-      <td>20162183</td>
-      <td>포켓몬 더 무비 XY&amp;Z 「볼케니온 : 기계왕국의 비밀」</td>
     </tr>
     <tr>
       <th>8</th>
+      <td>20179228</td>
+      <td>마야2</td>
+      <td></td>
       <td>0</td>
-      <td>홍지영</td>
-      <td>20152371</td>
-      <td>당신, 거기 있어줄래요</td>
     </tr>
     <tr>
       <th>9</th>
+      <td>20179205</td>
+      <td>조선명탐정: 흡혈괴마의 비밀</td>
+      <td></td>
       <td>0</td>
-      <td>야쿠와 신노스케</td>
-      <td>20165285</td>
-      <td>극장판 도라에몽: 신 진구의 버스 오브 재팬</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>20178469</td>
+      <td>올 더 머니</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>19980074</td>
+      <td>타이타닉</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>20189901</td>
+      <td>더 포리너</td>
+      <td></td>
+      <td>0</td>
     </tr>
     <tr>
       <th>13</th>
+      <td>20178672</td>
+      <td>패딩턴 2</td>
+      <td></td>
       <td>0</td>
-      <td>권수경</td>
-      <td>20154661</td>
-      <td>형</td>
     </tr>
     <tr>
       <th>14</th>
+      <td>20189761</td>
+      <td>터닝메카드W: 반다인의 비밀 특별판</td>
+      <td></td>
       <td>0</td>
-      <td>이동하</td>
-      <td>20161701</td>
-      <td>위켄즈</td>
     </tr>
     <tr>
       <th>15</th>
+      <td>20170841</td>
+      <td>리틀 포레스트</td>
+      <td></td>
       <td>0</td>
-      <td>김동민</td>
-      <td>20161603</td>
-      <td>순종</td>
     </tr>
     <tr>
       <th>16</th>
+      <td>20170561</td>
+      <td>블랙 팬서</td>
+      <td></td>
       <td>0</td>
-      <td>전인환</td>
-      <td>20162545</td>
-      <td>무현, 두 도시 이야기</td>
     </tr>
     <tr>
       <th>17</th>
+      <td>20168250</td>
+      <td>골든슬럼버</td>
+      <td></td>
       <td>0</td>
-      <td>이현주</td>
-      <td>20159286</td>
-      <td>연애담</td>
     </tr>
     <tr>
       <th>18</th>
+      <td>20176121</td>
+      <td>흥부: 글로 세상을 바꾼 자</td>
+      <td></td>
       <td>0</td>
-      <td>이영준</td>
-      <td>20164527</td>
-      <td>부릉! 부릉! 브루미즈: 스피더의 모험 일기</td>
     </tr>
     <tr>
       <th>19</th>
+      <td>20078561</td>
+      <td>명탐정 코난:감벽의 관</td>
+      <td></td>
       <td>0</td>
-      <td>고현창</td>
-      <td>20153401</td>
-      <td>파파좀비</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>20179462</td>
+      <td>위대한 쇼맨</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>20164844</td>
+      <td>불한당: 나쁜 놈들의 세상</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>20177946</td>
+      <td>월요일이 사라졌다</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>20180542</td>
+      <td>50가지 그림자: 해방</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>20173436</td>
+      <td>셰이프 오브 워터: 사랑의 모양</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>20189882</td>
+      <td>반딧불이 딘딘</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>20150969</td>
+      <td>궁합</td>
+      <td></td>
+      <td>0</td>
     </tr>
     <tr>
       <th>27</th>
+      <td>20179731</td>
+      <td>나미야 잡화점의 기적</td>
+      <td></td>
       <td>0</td>
-      <td>켄 로치</td>
-      <td>20161763</td>
-      <td>나, 다니엘 블레이크</td>
     </tr>
     <tr>
       <th>28</th>
+      <td>20180341</td>
+      <td>레드 스패로</td>
+      <td></td>
       <td>0</td>
-      <td>미츠나카 스스무</td>
-      <td>20165543</td>
-      <td>하이큐!! 승자와 패자</td>
     </tr>
     <tr>
       <th>29</th>
+      <td>20189861</td>
+      <td>더 포스트</td>
+      <td></td>
       <td>0</td>
-      <td>롭 라이너</td>
-      <td>19890291</td>
-      <td>해리가 샐리를 만났을 때</td>
-    </tr>
-    <tr>
-      <th>43</th>
-      <td>0</td>
-      <td>주지홍</td>
-      <td>20150966</td>
-      <td>사랑하기 때문에</td>
-    </tr>
-    <tr>
-      <th>45</th>
-      <td>0</td>
-      <td>최우성</td>
-      <td>20165925</td>
-      <td>음란 과외 - 무삭제판</td>
-    </tr>
-    <tr>
-      <th>46</th>
-      <td>0</td>
-      <td>김기영</td>
-      <td>20080893</td>
-      <td>렌의 애가</td>
-    </tr>
-    <tr>
-      <th>57</th>
-      <td>0</td>
-      <td>디에터 버너</td>
-      <td>20160221</td>
-      <td>에곤 쉴레: 욕망이 그린 그림</td>
-    </tr>
-    <tr>
-      <th>69</th>
-      <td>0</td>
-      <td>김진혁</td>
-      <td>20163014</td>
-      <td>7년-그들이 없는 언론</td>
-    </tr>
-    <tr>
-      <th>75</th>
-      <td>0</td>
-      <td>김태용</td>
-      <td>20151181</td>
-      <td>여교사</td>
-    </tr>
-    <tr>
-      <th>76</th>
-      <td>0</td>
-      <td>전일우</td>
-      <td>20154342</td>
-      <td>뚜르: 내 생애 최고의 49일</td>
-    </tr>
-    <tr>
-      <th>77</th>
-      <td>0</td>
-      <td>송민규</td>
-      <td>20155223</td>
-      <td>목숨 건 연애</td>
-    </tr>
-    <tr>
-      <th>79</th>
-      <td>0</td>
-      <td>모리오카 토시유키</td>
-      <td>20167286</td>
-      <td>형의 여자</td>
-    </tr>
-    <tr>
-      <th>92</th>
-      <td>0</td>
-      <td>모튼 틸덤</td>
-      <td>20161084</td>
-      <td>패신저스</td>
     </tr>
     <tr>
       <th>...</th>
@@ -482,510 +578,738 @@ movie_code_list_all
       <td>...</td>
     </tr>
     <tr>
-      <th>329</th>
+      <th>294</th>
+      <td>20161141</td>
+      <td>50가지 그림자: 심연</td>
+      <td></td>
       <td>0</td>
-      <td>론 클레멘츠</td>
-      <td>20165443</td>
-      <td>모아나</td>
     </tr>
     <tr>
-      <th>346</th>
+      <th>295</th>
+      <td>20163580</td>
+      <td>그레이트 월</td>
+      <td></td>
       <td>0</td>
-      <td>김소연</td>
-      <td>20160881</td>
-      <td>문영</td>
     </tr>
     <tr>
-      <th>437</th>
+      <th>296</th>
+      <td>20167362</td>
+      <td>더 큐어</td>
+      <td></td>
       <td>0</td>
-      <td>임원식</td>
-      <td>20149384</td>
-      <td>청일전쟁과 여걸 민비</td>
     </tr>
     <tr>
-      <th>469</th>
+      <th>297</th>
+      <td>20161366</td>
+      <td>그래, 가족</td>
+      <td></td>
       <td>0</td>
-      <td>한형모</td>
-      <td>20155700</td>
-      <td>왕자 호동</td>
     </tr>
     <tr>
-      <th>497</th>
+      <th>298</th>
+      <td>20167906</td>
+      <td>마이펫 오지</td>
+      <td></td>
       <td>0</td>
-      <td>김기영</td>
-      <td>19600018</td>
-      <td>하녀</td>
     </tr>
     <tr>
-      <th>518</th>
+      <th>299</th>
+      <td>20161723</td>
+      <td>싱글라이더</td>
+      <td></td>
       <td>0</td>
-      <td>피터 잭슨</td>
+    </tr>
+    <tr>
+      <th>300</th>
+      <td>20156562</td>
+      <td>루시드 드림</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>301</th>
+      <td>20167922</td>
+      <td>핵소 고지</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>302</th>
+      <td>20161725</td>
+      <td>마스터</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>303</th>
+      <td>20163183</td>
+      <td>로그 원: 스타워즈 스토리</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>304</th>
+      <td>20162025</td>
+      <td>씽</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>305</th>
+      <td>20144641</td>
+      <td>판도라</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>306</th>
+      <td>20162727</td>
+      <td>루돌프와 많이있어</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>307</th>
+      <td>20162183</td>
+      <td>포켓몬 더 무비 XY&amp;Z 「볼케니온 : 기계왕국의 비밀」</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>308</th>
+      <td>20152371</td>
+      <td>당신, 거기 있어줄래요</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>309</th>
+      <td>20165285</td>
+      <td>극장판 도라에몽: 신 진구의 버스 오브 재팬</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>310</th>
+      <td>19890291</td>
+      <td>해리가 샐리를 만났을 때</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>311</th>
+      <td>20161763</td>
+      <td>나, 다니엘 블레이크</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>312</th>
+      <td>20163014</td>
+      <td>7년-그들이 없는 언론</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>313</th>
+      <td>20161084</td>
+      <td>패신저스</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>314</th>
+      <td>20150966</td>
+      <td>사랑하기 때문에</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>315</th>
+      <td>20165153</td>
+      <td>눈의 여왕 3: 눈과 불의 마법대결</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>316</th>
+      <td>20151181</td>
+      <td>여교사</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>317</th>
+      <td>20164421</td>
+      <td>어쌔신 크리드</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>318</th>
+      <td>20168381</td>
+      <td>얼라이드</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>319</th>
+      <td>20168324</td>
+      <td>반지의 제왕 : 반지원정대 (확장판)</td>
+      <td></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>320</th>
       <td>20168664</td>
       <td>반지의 제왕 : 두개의 탑 (확장판)</td>
+      <td></td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>536</th>
-      <td>0</td>
-      <td>자비에 돌란</td>
+      <th>321</th>
       <td>20163186</td>
       <td>단지 세상의 끝</td>
+      <td></td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>539</th>
-      <td>0</td>
-      <td>스티븐 달드리</td>
-      <td>20010130</td>
-      <td>빌리 엘리어트</td>
-    </tr>
-    <tr>
-      <th>569</th>
-      <td>0</td>
-      <td>가스 데이비스</td>
-      <td>20167324</td>
-      <td>라이언</td>
-    </tr>
-    <tr>
-      <th>618</th>
-      <td>0</td>
-      <td>배경헌</td>
-      <td>20168104</td>
-      <td>2017 한국영화아카데미 33기 졸업영화제 - B</td>
-    </tr>
-    <tr>
-      <th>619</th>
-      <td>0</td>
-      <td>곽승민</td>
-      <td>20168086</td>
-      <td>2017 한국영화아카데미 33기 졸업영화제 - A</td>
-    </tr>
-    <tr>
-      <th>646</th>
-      <td>0</td>
-      <td>전희욱</td>
-      <td>20168088</td>
-      <td>2017 한국영화아카데미 33기 졸업영화제 - D</td>
-    </tr>
-    <tr>
-      <th>647</th>
-      <td>0</td>
-      <td>한가람</td>
-      <td>20168087</td>
-      <td>2017 한국영화아카데미 33기 졸업영화제 - C</td>
-    </tr>
-    <tr>
-      <th>675</th>
-      <td>0</td>
-      <td>김태윤</td>
-      <td>20166421</td>
-      <td>재심</td>
-    </tr>
-    <tr>
-      <th>688</th>
-      <td>0</td>
-      <td>에릭 섬머</td>
-      <td>20167644</td>
-      <td>발레리나</td>
-    </tr>
-    <tr>
-      <th>689</th>
-      <td>0</td>
-      <td>피터 버그</td>
-      <td>20168154</td>
-      <td>딥워터 호라이즌</td>
-    </tr>
-    <tr>
-      <th>706</th>
-      <td>0</td>
-      <td>노진수</td>
-      <td>20179481</td>
-      <td>사랑받지 못한 여자</td>
-    </tr>
-    <tr>
-      <th>708</th>
-      <td>0</td>
-      <td>이준익</td>
-      <td>20158482</td>
-      <td>동주</td>
-    </tr>
-    <tr>
-      <th>722</th>
-      <td>0</td>
-      <td>폴 W.S. 앤더슨</td>
-      <td>20168688</td>
-      <td>레지던트 이블: 파멸의 날</td>
-    </tr>
-    <tr>
-      <th>727</th>
-      <td>0</td>
-      <td>타카하시 와타루</td>
-      <td>20167285</td>
-      <td>짱구는 못말려 극장판: 폭풍수면! 꿈꾸는 세계 대돌격</td>
-    </tr>
-    <tr>
-      <th>737</th>
-      <td>0</td>
-      <td>이나정</td>
-      <td>20158799</td>
-      <td>눈길</td>
-    </tr>
-    <tr>
-      <th>739</th>
-      <td>0</td>
-      <td>한형모</td>
-      <td>19598036</td>
-      <td>여사장</td>
-    </tr>
-    <tr>
-      <th>747</th>
-      <td>0</td>
-      <td>피터 잭슨</td>
+      <th>322</th>
       <td>20168689</td>
       <td>반지의 제왕 : 왕의 귀환 (확장판)</td>
+      <td></td>
+      <td>0</td>
     </tr>
     <tr>
-      <th>748</th>
-      <td>0</td>
-      <td>레베카 밀러</td>
-      <td>20165822</td>
-      <td>매기스 플랜</td>
-    </tr>
-    <tr>
-      <th>749</th>
-      <td>0</td>
-      <td>데니스 체르노프</td>
-      <td>20168611</td>
-      <td>키코리키: 황금모자의 비밀</td>
-    </tr>
-    <tr>
-      <th>779</th>
-      <td>0</td>
-      <td>다라 오코넬</td>
+      <th>323</th>
       <td>20168366</td>
       <td>바다 탐험대 옥토넛 시즌4: 바다 괴물 대소동</td>
-    </tr>
-    <tr>
-      <th>826</th>
+      <td></td>
       <td>0</td>
-      <td>박호태</td>
-      <td>19820052</td>
-      <td>애인</td>
-    </tr>
-    <tr>
-      <th>839</th>
-      <td>0</td>
-      <td>파블로 라라인</td>
-      <td>20166707</td>
-      <td>재키</td>
-    </tr>
-    <tr>
-      <th>887</th>
-      <td>0</td>
-      <td>황풍</td>
-      <td>19730023</td>
-      <td>흑권</td>
-    </tr>
-    <tr>
-      <th>913</th>
-      <td>0</td>
-      <td>박광현</td>
-      <td>20150964</td>
-      <td>조작된 도시</td>
     </tr>
   </tbody>
 </table>
-<p>79 rows × 4 columns</p>
+<p>324 rows × 4 columns</p>
 </div>
 
 
 
 ```python
-############### 네이버 api로 별점 추출, def 이용_1
+#movie_info의  director를 뽑아서 movie_code_list에 넣기
+movie_info_keys=list(movie_info.keys())
+#movie_info_keys
 ```
 
 ```python
-from bs4 import BeautifulSoup
-import urllib.request
-from urllib.parse import quote
-import json
-import re
-import requests
-
-naver_client_id = "YO4i1JrH8SJibQryNA8j"
-naver_client_secret = "gYKhYt564S"
-
-def cleanhtml(raw_html):
-    cleanr = re.compile('<.*?>')
-    cleantext = re.sub(cleanr, '', raw_html)
-    return cleantext
-def searchByTitle(title): #네이버 api
-    myurl = 'https://openapi.naver.com/v1/search/movie.json?display=100&query=' + quote(title)
-    request = urllib.request.Request(myurl)
-    request.add_header("X-Naver-Client-Id",naver_client_id)
-    request.add_header("X-Naver-Client-Secret",naver_client_secret)
-    response = urllib.request.urlopen(request)
-    rescode = response.getcode()
-    if(rescode==200):
-        response_body = response.read()
-        d = json.loads(response_body.decode('utf-8'))
-        if (len(d['items']) > 0):
-            return d['items']
-        else:
-            return None 
-    else:
-        print("Error Code:" + rescode)
-```
-
-```python
-#requests data 불러오기
-def findItemByInput(items):
-    n=len(items)
-    #print('n = ',n)
-    for index, item in enumerate(items):
-        navertitle = cleanhtml(item['title'])
- #       naversubtitle = cleanhtml(item['subtitle'])
- #       naverpubdate = cleanhtml(item['pubDate'])
- #       naveractor = cleanhtml(item['actor'])
-        naverlink = cleanhtml(item['link']) # 있어야함
-        naverdirecter=cleanhtml(item['director'])
-        naveruserScore = cleanhtml(item['userRating'])
- 
-        navertitle1 = navertitle.replace(" ","")
-        navertitle1 = navertitle1.replace("-", ",")
-        navertitle1 = navertitle1.replace(":", ",")
- 
-        spScore = getSpecialScore(naverlink)  #기자 평론가 평점을 얻어 옵니다
+for i in range(len(movie_code_list_all)):
+    with open(movie_info_path+'raw_data/movie_info/movie_info.txt', 'r', encoding="utf-8") as make_file:
+        d = json.load(make_file)
+    if(d[movie_info_keys[i]]['directors'] != []):
+        movie_code_list_all['director'][i]=d[movie_info_keys[i]]['directors'][0]['peopleNm']
         
-        naverid = re.split("code=", naverlink)[1]  #네이버가 다루는 영화 고유 ID를 얻어 옵니다
-   #     print('naveruserScore',naveruserScore)
-        print(naveruserScore)
-      #  print(naverid, navertitle,naveruserScore, spScore)
-      #  print(index, navertitle, naversubtitle, naveruserScore, spScore)
-```
-
-```python
-def getInfoFromNaver(searchTitle):
-    items = searchByTitle(searchTitle)
- 
-    if (items != None):
-        findItemByInput(items)
     else:
-        print("No result") 
+        movie_code_list_all['director'][i] = '---'
 ```
 
-```python
-def get_soup(url):
-    source_code = requests.get(url)
-    plain_text = source_code.text
-    soup = BeautifulSoup(plain_text, 'lxml')
-    return soup
- 
-#기자 평론가 평점을 얻어 옵니다
-def getSpecialScore(URL):
-    soup = get_soup(URL)
-    scorearea = soup.find_all('div', "spc_score_area")
-    newsoup = BeautifulSoup(str(scorearea), 'lxml')
-    score = newsoup.find_all('em')
-    if (score and len(score) > 5):
-        scoreis = score[1].text + score[2].text + score[3].text + score[4].text
-        return float(scoreis)
-    else:
-        return 0.0
-```
-
-```python
-for r in tqdm_notebook(range(10)):
-    print('r = ',r)
+    /home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:5: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame
     
-    name=movie_code_list_all.iloc[r,3]
-    print('name = ',name)  
+    See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+      """
+    /home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:8: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame
     
-    getInfoFromNaver(name)    #이 값을 변수에 넣을 수가 없음 ㅠㅠ 대입이 안됨
-    
+    See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+      
 
-movie_code_list_all
-```
-
-```python
-############### 네이버 api로 별점 추출, def 이용_2
-import os
-import sys
-import urllib.request
-
-client_id = "YO4i1JrH8SJibQryNA8j"
-client_secret = "gYKhYt564S"
-
-with open('movie_info.txt', 'w', encoding='utf-8') as outfile:   
-    json.dump(movie_info, outfile, ensure_ascii=False)
-
-from IPython.display import clear_output
-
-def naver_starscore():
-    for i in tqdm_notebook(range(len(movie_code_list_all))) : 
-        url = 'https://openapi.naver.com/v1/search/movie.json'
-        dic = {
-            'query' : movie_code_list_all.iloc[i, 3],
-            'display' : 10
-        }
-
-        headers = {
-            'X-Naver-Client-Id' : 'API Client ID',
-            'X-Naver-Client-Secret' : 'API Client Secret'
-        }
-        
-        request = requests.get(url, headers=headers, dic=payload)        
-        response = urllib.request.urlopen(request)
-        rescode = response.getcode()
-        
-        if(rescode==200):
-            response_body = response.read()
-            js_naver = json.loads(response_body)
-            print(l, 'th = request success')
-            print('js_naver = \n', js_naver)
-
-            if js_naver['total']==1: #영화명 1개, 별점 추출                
-                if movie_code_list_all.iloc[l,3].replace(' ', '') == js_naver['items'][0]['title'][3:-4].replace(' ', ''):
-                    movie_code_list_all.iloc[l,0] = js_naver['items'][0]['userRating']
-                    print(' 영화명1개, 일치,  okokokokkok')
-                else:                
-                    print(' 영화명1개, 불일치')
-
-            else:  #영화명 여러개 
-             #   print('js_naver[items].count(title) = ',js_naver['items'].count('title'))
-                for j in range(1,js_naver['items'].count('title')):
-                 #   print('j = ', j)
-                    for k in range(80):
-                 #       print('k = ',k)
-              #          print('js_naver director =',js_naver['items'][j]['director'][:3],'movie_code_list_all.iloc[k,1] = ',movie_code_list_all.iloc[k,1])
-                        if js_naver['items'][j]['director'][:3] == movie_code_list_all.iloc[k,1]:                        
-                            movie_code_list_all.iloc[l,0] = js_naver['items'][0]['userRating']
-                #            print('영화여러개, 감독 일치, okokokok')
-                        else:
-                            movie_code_list_all.iloc[l,0] = 0
-                   #         print('영화여러개, 감독불일치, 별점 0')
-        else:
-            print("Error Code:" + rescode)
-```
 
 ```python
 movie_code_list_all
 ```
 
-```python
-############### 네이버 api로 별점 추출, display = 100 으로 수정중
-import os
-import sys
-import urllib.request
 
-client_id = "YO4i1JrH8SJibQryNA8j"
-client_secret = "gYKhYt564S"
 
-with open('movie_info.txt', 'w', encoding='utf-8') as outfile:   
-    json.dump(movie_info, outfile, ensure_ascii=False)
 
-for i in tqdm_notebook(range(len(movie_code_list_all))) :  
-    url = 'https://openapi.naver.com/v1/search/movie.json'
-    dic = {
-        'query' : movie_code_list_all.iloc[i, 3],
-         'display' : 100
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
     }
-    headers = {
-         'X-Naver-Client-Id' : 'API Client ID',
-          'X-Naver-Client-Secret' : 'API Client Secret'
-       }    
-    req = requests.get(url, headers=headers, params=dic)
-    response = urllib.request.urlopen(request)
-    rescode = response.getcode()        
-    
-    if(rescode==200):
-        response_body = response.read()
-        js_naver = json.loads(response_body)
-        print(l, 'th = request success')
-        print('js_naver = \n', js_naver)
-        
-        if js_naver['total']==1: #영화명 1개, 별점 추출                
-            if movie_code_list_all.iloc[l,3].replace(' ', '') == js_naver['items'][0]['title'][3:-4].replace(' ', ''):
-                movie_code_list_all.iloc[l,0] = js_naver['items'][0]['userRating']
-                print(' 영화명1개, 일치,  okokokokkok')
-            else:                
-                print(' 영화명1개, 불일치')
-                
-        else:  #영화명 여러개 
-            print('js_naver[items].count(title) = ',js_naver['items'].count('title'))
-            for j in range(1,js_naver['items'].count('title')):
-                print('j = ', j)
-                for k in range(80):
-                    print('k = ',k)
-                    print('js_naver director =',js_naver['items'][j]['director'][:3],'movie_code_list_all.iloc[k,1] = ',movie_code_list_all.iloc[k,1])
-                    if js_naver['items'][j]['director'][:3] == movie_code_list_all.iloc[k,1]:                        
-                        movie_code_list_all.iloc[l,0] = js_naver['items'][0]['userRating']
-            #            print('영화여러개, 감독 일치, okokokok')
-                    else:
-                        movie_code_list_all.iloc[l,0] = 0
-               #         print('영화여러개, 감독불일치, 별점 0')
-    else:
-        print("Error Code:" + rescode)
-```
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>movieCd</th>
+      <th>movieNm</th>
+      <th>director</th>
+      <th>Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>20168323</td>
+      <td>염력</td>
+      <td>연상호</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>20176104</td>
+      <td>그것만이 내 세상</td>
+      <td>최성현</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>20178126</td>
+      <td>인시디어스4: 라스트 키</td>
+      <td>애덤 로비텔</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>20179985</td>
+      <td>코코</td>
+      <td>리 언크리치</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>20150976</td>
+      <td>신과함께-죄와 벌</td>
+      <td>김용화</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>20175054</td>
+      <td>메이즈 러너: 데스 큐어</td>
+      <td>웨스 볼</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>20178395</td>
+      <td>12 솔져스</td>
+      <td>니콜라이 퓰시</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>20170590</td>
+      <td>1987</td>
+      <td>장준환</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>20179228</td>
+      <td>마야2</td>
+      <td>노엘 클리어리</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>20179205</td>
+      <td>조선명탐정: 흡혈괴마의 비밀</td>
+      <td>김석윤</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>20178469</td>
+      <td>올 더 머니</td>
+      <td>리들리 스콧</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>19980074</td>
+      <td>타이타닉</td>
+      <td>제임스 카메론</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>20189901</td>
+      <td>더 포리너</td>
+      <td>마틴 캠벨</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>20178672</td>
+      <td>패딩턴 2</td>
+      <td>폴 킹</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>20189761</td>
+      <td>터닝메카드W: 반다인의 비밀 특별판</td>
+      <td>홍헌표</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>20170841</td>
+      <td>리틀 포레스트</td>
+      <td>임순례</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>20170561</td>
+      <td>블랙 팬서</td>
+      <td>라이언 쿠글러</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>20168250</td>
+      <td>골든슬럼버</td>
+      <td>노동석</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>20176121</td>
+      <td>흥부: 글로 세상을 바꾼 자</td>
+      <td>조근현</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>20078561</td>
+      <td>명탐정 코난:감벽의 관</td>
+      <td>야마모토 야스이치로</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>20179462</td>
+      <td>위대한 쇼맨</td>
+      <td>마이클 그레이시</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>20164844</td>
+      <td>불한당: 나쁜 놈들의 세상</td>
+      <td>변성현</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>20177946</td>
+      <td>월요일이 사라졌다</td>
+      <td>토미 위르콜라</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>20180542</td>
+      <td>50가지 그림자: 해방</td>
+      <td>제임스 폴리</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>20173436</td>
+      <td>셰이프 오브 워터: 사랑의 모양</td>
+      <td>기예르모 델 토로</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>20189882</td>
+      <td>반딧불이 딘딘</td>
+      <td>등위봉</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>20150969</td>
+      <td>궁합</td>
+      <td>홍창표</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>20179731</td>
+      <td>나미야 잡화점의 기적</td>
+      <td>히로키 류이치</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>20180341</td>
+      <td>레드 스패로</td>
+      <td>프란시스 로렌스</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>20189861</td>
+      <td>더 포스트</td>
+      <td>스티븐 스필버그</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>294</th>
+      <td>20161141</td>
+      <td>50가지 그림자: 심연</td>
+      <td>제임스 폴리</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>295</th>
+      <td>20163580</td>
+      <td>그레이트 월</td>
+      <td>장예모</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>296</th>
+      <td>20167362</td>
+      <td>더 큐어</td>
+      <td>고어 버빈스키</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>297</th>
+      <td>20161366</td>
+      <td>그래, 가족</td>
+      <td>마대윤</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>298</th>
+      <td>20167906</td>
+      <td>마이펫 오지</td>
+      <td>알베르토 로드리게즈</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>299</th>
+      <td>20161723</td>
+      <td>싱글라이더</td>
+      <td>이주영</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>300</th>
+      <td>20156562</td>
+      <td>루시드 드림</td>
+      <td>김준성</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>301</th>
+      <td>20167922</td>
+      <td>핵소 고지</td>
+      <td>멜 깁슨</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>302</th>
+      <td>20161725</td>
+      <td>마스터</td>
+      <td>조의석</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>303</th>
+      <td>20163183</td>
+      <td>로그 원: 스타워즈 스토리</td>
+      <td>가렛 에드워즈</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>304</th>
+      <td>20162025</td>
+      <td>씽</td>
+      <td>가스 제닝스</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>305</th>
+      <td>20144641</td>
+      <td>판도라</td>
+      <td>박정우</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>306</th>
+      <td>20162727</td>
+      <td>루돌프와 많이있어</td>
+      <td>유야마 쿠니히코</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>307</th>
+      <td>20162183</td>
+      <td>포켓몬 더 무비 XY&amp;Z 「볼케니온 : 기계왕국의 비밀」</td>
+      <td>유야마 쿠니히코</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>308</th>
+      <td>20152371</td>
+      <td>당신, 거기 있어줄래요</td>
+      <td>홍지영</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>309</th>
+      <td>20165285</td>
+      <td>극장판 도라에몽: 신 진구의 버스 오브 재팬</td>
+      <td>야쿠와 신노스케</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>310</th>
+      <td>19890291</td>
+      <td>해리가 샐리를 만났을 때</td>
+      <td>롭 라이너</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>311</th>
+      <td>20161763</td>
+      <td>나, 다니엘 블레이크</td>
+      <td>켄 로치</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>312</th>
+      <td>20163014</td>
+      <td>7년-그들이 없는 언론</td>
+      <td>김진혁</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>313</th>
+      <td>20161084</td>
+      <td>패신저스</td>
+      <td>모튼 틸덤</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>314</th>
+      <td>20150966</td>
+      <td>사랑하기 때문에</td>
+      <td>주지홍</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>315</th>
+      <td>20165153</td>
+      <td>눈의 여왕 3: 눈과 불의 마법대결</td>
+      <td>알렉세이 트시칠린</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>316</th>
+      <td>20151181</td>
+      <td>여교사</td>
+      <td>김태용</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>317</th>
+      <td>20164421</td>
+      <td>어쌔신 크리드</td>
+      <td>저스틴 커젤</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>318</th>
+      <td>20168381</td>
+      <td>얼라이드</td>
+      <td>로버트 저메키스</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>319</th>
+      <td>20168324</td>
+      <td>반지의 제왕 : 반지원정대 (확장판)</td>
+      <td>피터 잭슨</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>320</th>
+      <td>20168664</td>
+      <td>반지의 제왕 : 두개의 탑 (확장판)</td>
+      <td>피터 잭슨</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>321</th>
+      <td>20163186</td>
+      <td>단지 세상의 끝</td>
+      <td>자비에 돌란</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>322</th>
+      <td>20168689</td>
+      <td>반지의 제왕 : 왕의 귀환 (확장판)</td>
+      <td>피터 잭슨</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>323</th>
+      <td>20168366</td>
+      <td>바다 탐험대 옥토넛 시즌4: 바다 괴물 대소동</td>
+      <td>다라 오코넬</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>324 rows × 4 columns</p>
+</div>
+
+
 
 ```python
-movie_code_list_all
-```
-
-```python
-############### 네이버 api로 별점 추출, display=10
-import os
-import sys
-import urllib.request
-
-client_id = "YO4i1JrH8SJibQryNA8j"
-client_secret = "gYKhYt564S"
-
-with open('movie_info.txt', 'w', encoding='utf-8') as outfile:   
+with open('movie_info.txt', 'w', encoding='utf-8') as outfile:   #딕셔너리를 json으로 저장
     json.dump(movie_info, outfile, ensure_ascii=False)
-
-for l in tqdm_notebook(range(len(movie_code_list_all))):
-    m=movie_code_list_all.iloc[l,3] #영화명이 iloc[l,3]
-    encText = urllib.parse.quote(m)
-    url = "https://openapi.naver.com/v1/search/movie.json?query=" + encText # json 결과
-    request = urllib.request.Request(url)
-    request.add_header("X-Naver-Client-Id",client_id)
-    request.add_header("X-Naver-Client-Secret",client_secret)
-    response = urllib.request.urlopen(request)
-    rescode = response.getcode()
-    
-    if(rescode==200):
-        response_body = response.read()
-        js_naver = json.loads(response_body)
-        print(l, 'th = request success')
-        print('js_naver = \n', js_naver)
-        
-        if js_naver['total']==1: #영화명 1개, 별점 추출                
-            if movie_code_list_all.iloc[l,3].replace(' ', '') == js_naver['items'][0]['title'][3:-4].replace(' ', ''):
-                movie_code_list_all.iloc[l,0] = js_naver['items'][0]['userRating']
-                print(' 영화명1개, 일치,  okokokokkok')
-            else:                
-                print(' 영화명1개, 불일치')
-                
-        else:  #영화명 여러개 
-            print('js_naver[items].count(title) = ',js_naver['items'].count('title'))
-            for j in range(1,js_naver['items'].count('title')):
-                print('j = ', j)
-                for k in range(80):
-                    print('k = ',k)
-                    print('js_naver director =',js_naver['items'][j]['director'][:3],'movie_code_list_all.iloc[k,1] = ',movie_code_list_all.iloc[k,1])
-                    if js_naver['items'][j]['director'][:3] == movie_code_list_all.iloc[k,1]:                        
-                        movie_code_list_all.iloc[l,0] = js_naver['items'][0]['userRating']
-            #            print('영화여러개, 감독 일치, okokokok')
-                    else:
-                        movie_code_list_all.iloc[l,0] = 0
-               #         print('영화여러개, 감독불일치, 별점 0')
-    else:
-        print("Error Code:" + rescode)
 ```
 
 ```python
-movie_code_list_all
+
 ```
 
 ```python
-movie_code_list_all.to_csv("movie_code_list_all.csv", index=False)
+
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
 ```

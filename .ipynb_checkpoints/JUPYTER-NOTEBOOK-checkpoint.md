@@ -53,6 +53,7 @@ WorkingDirectory=/your/working/dir
 [Install]
 WantedBy=multi-user.target
 ```
+sudo chmod +x jupyter.service
 
 sudo systemctl daemon-reload
 
