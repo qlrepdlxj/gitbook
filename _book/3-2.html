@@ -1,0 +1,755 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>4. 네이버 OPEN API · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="3-3.html" />
+    
+    
+    <link rel="prev" href="3.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    빅데이터 영화 분석
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="1.html">
+            
+                <a href="1.html">
+            
+                    
+                    1. 데이터 분석 설계
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="2.html">
+            
+                <a href="2.html">
+            
+                    
+                    2. 데이터 준비
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="3.html">
+            
+                <a href="3.html">
+            
+                    
+                    3. KOBIS OPEN API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.1.4" data-path="3-2.html">
+            
+                <a href="3-2.html">
+            
+                    
+                    4. 네이버 OPEN API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.5" data-path="3-3.html">
+            
+                <a href="3-3.html">
+            
+                    
+                    5. 데이터 전처리
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.6" data-path="3-4.html">
+            
+                <a href="3-4.html">
+            
+                    
+                    6. 
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.7" data-path="3-5.html">
+            
+                <a href="3-5.html">
+            
+                    
+                    7. 
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.8" data-path="3-5-1.html">
+            
+                <a href="3-5-1.html">
+            
+                    
+                    8. 
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.9" data-path="3-6.html">
+            
+                <a href="3-6.html">
+            
+                    
+                    9. 분석
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.10" data-path="111.html">
+            
+                <a href="111.html">
+            
+                    
+                    10. 분석1
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.11" >
+            
+                <span>
+            
+                    
+                    11. 분석2
+            
+                </span>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.12" data-path="222.html">
+            
+                <a href="222.html">
+            
+                    
+                    13. 분석3
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.13" >
+            
+                <span>
+            
+                    
+                    [14. 결론]
+            
+                </span>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="LINK.html">
+            
+                <a href="LINK.html">
+            
+                    
+                    링크
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">reference</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="AWS.html">
+            
+                <a href="AWS.html">
+            
+                    
+                    * AWS
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="DDNS.html">
+            
+                <a href="DDNS.html">
+            
+                    
+                    * DDNS
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="GIT.html">
+            
+                <a href="GIT.html">
+            
+                    
+                    * GIT
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="GITBOOK.html">
+            
+                <a href="GITBOOK.html">
+            
+                    
+                    * GITBOOK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="JUPYTER-NOTEBOOK.html">
+            
+                <a href="JUPYTER-NOTEBOOK.html">
+            
+                    
+                    * JUPYTER-NOTEBOOK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="NETWORK.html">
+            
+                <a href="NETWORK.html">
+            
+                    
+                    * NETWORK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="REF.html">
+            
+                <a href="REF.html">
+            
+                    
+                    * REF
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >4. 네이버 OPEN API</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="4-&#xB124;&#xC774;&#xBC84;-open-api">4. &#xB124;&#xC774;&#xBC84; OPEN API</h1>
+<p>&#xB124;&#xC774;&#xBC84; &#xB370;&#xC774;&#xD130; OPEN API&#xB97C; &#xC0AC;&#xC6A9;&#xD558;&#xC5EC; &#xC601;&#xD654;&#xBCC4; &#xBCC4;&#xC810;&#xACFC; &#xAC80;&#xC0C9;&#xB7C9; &#xC790;&#xB8CC;&#xB97C; CSV&#xD30C;&#xC77C;&#xB85C; &#xC800;&#xC7A5;</p>
+<h2 id="1-&#xB124;&#xC774;&#xBC84;-&#xBCC4;&#xC810;">1) &#xB124;&#xC774;&#xBC84; &#xBCC4;&#xC810;</h2>
+<h2 id="2-&#xB124;&#xC774;&#xBC84;-datalab">2) &#xB124;&#xC774;&#xBC84; datalab</h2>
+<pre><code class="lang-python"><span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup
+<span class="hljs-keyword">from</span> urllib.request <span class="hljs-keyword">import</span> urlopen
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm
+<span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm_notebook
+<span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> date
+<span class="hljs-keyword">import</span> glob
+<span class="hljs-keyword">import</span> multiprocessing
+<span class="hljs-keyword">import</span> os
+</code></pre>
+<pre><code class="lang-python"><span class="hljs-comment"># requests &#xBAA8;&#xB4C8;&#xB85C; url &#xB0B4;&#xC6A9;&#xC744; &#xAC00;&#xC838;&#xC624;&#xACE0; BeautifulSoup&#xB85C; &#xB0B4;&#xC6A9; &#xAC00;&#xACF5;&#xD558;&#xAE30;</span>
+start_date = date(<span class="hljs-number">2017</span>,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>)
+end_date = date(<span class="hljs-number">2018</span>,<span class="hljs-number">2</span>,<span class="hljs-number">28</span>)
+<span class="hljs-comment"># Dt=20170101</span>
+<span class="hljs-comment"># m_name=[]</span>
+<span class="hljs-comment"># movie_dict=[]</span>
+<span class="hljs-comment"># movie_dict2=[]</span>
+<span class="hljs-comment"># dff2 = pd.DataFrame()</span>
+<span class="hljs-comment">#title_n = soup.find_all(&apos;div&apos;, &apos;tit3&apos;)</span>
+
+<span class="hljs-comment"># for single_date in tqdm_notebook(pd.date_range(start_date, end_date)):</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">naver_movie_daily_boxoffice</span><span class="hljs-params">(single_date)</span>:</span>
+    j=<span class="hljs-number">0</span>
+    movie_name=[]
+    movie_point=[]
+    targetDt = str(single_date)[<span class="hljs-number">0</span>:<span class="hljs-number">4</span>]+str(single_date)[<span class="hljs-number">5</span>:<span class="hljs-number">7</span>]+str(single_date)[<span class="hljs-number">8</span>:<span class="hljs-number">10</span>]
+    url = <span class="hljs-string">&quot;http://movie.naver.com/movie/sdb/rank/rmovie.nhn?sel=cnt&amp;date=&quot;</span>+targetDt
+    res = requests.get(url)
+    soup = BeautifulSoup(res.content, <span class="hljs-string">&quot;html.parser&quot;</span>)
+    b = soup.find_all(<span class="hljs-string">&apos;div&apos;</span>,<span class="hljs-string">&apos;tit3&apos;</span>)
+    title_n = soup.find_all(<span class="hljs-string">&apos;div&apos;</span>, <span class="hljs-string">&apos;tit3&apos;</span>)
+    <span class="hljs-comment"># b = soup.find_all(&apos;div&apos;, &apos;tit3&apos;)[n]</span>
+    <span class="hljs-comment"># &#xC804;&#xCCB4; &#xC601;&#xD654;&#xC758; &#xC81C;&#xBAA9; &#xBF51;&#xC544;&#xC634;</span>
+
+
+    <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, len(title_n)):
+        movie_name.append(b[n].find(<span class="hljs-string">&apos;a&apos;</span>).text)
+
+    <span class="hljs-comment"># &#xC804;&#xCCB4; &#xC21C;&#xC704;&#xC758; &#xD3C9;&#xC810; &#xBF51;&#xC544;&#xC634;</span>
+        movie_point.append(b[n].find(<span class="hljs-string">&apos;a&apos;</span>)[<span class="hljs-string">&apos;href&apos;</span>][<span class="hljs-number">28</span>:])
+
+    dff = list(zip(movie_name,movie_point))
+    dff = pd.DataFrame(dff)
+<span class="hljs-comment">#     dff = dff.drop_duplicates()</span>
+<span class="hljs-comment">#     dff = dff.reset_index(drop=True)</span>
+    dff.to_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/tmp_data/&apos;</span>+targetDt+<span class="hljs-string">&apos;.csv&apos;</span>,index=<span class="hljs-keyword">False</span>)
+
+    <span class="hljs-comment"># &#xD558;&#xB8E8;&#xB9CC; &#xC800;&#xC7A5;&#xB428; &#xC804;&#xCCB4;&#xAC00; &#xC800;&#xC7A5;&#xB418;&#xB294; &#xCF54;&#xB4DC; &#xD544;&#xC694;&#xD568;</span>
+</code></pre>
+<pre><code class="lang-python">cpu = os.cpu_count()
+date_list = pd.date_range(start_date, end_date)
+pool = multiprocessing.Pool(processes=cpu)
+pool.map(naver_movie_daily_boxoffice,date_list)
+pool.close()
+pool.join()
+</code></pre>
+<pre><code class="lang-python">tmp = glob.glob(<span class="hljs-string">&apos;/home/ubuntu/movie/tmp_data/*.csv&apos;</span>)
+dff = pd.DataFrame()
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> tmp:
+    df = pd.read_csv(i)
+    dff = pd.concat([df,dff])
+dff.to_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>,index=<span class="hljs-keyword">False</span>)
+</code></pre>
+<pre><code class="lang-python"><span class="hljs-comment"># tmp_data = glob.glob(&apos;/home/ubuntu/movie/tmp_data/*.csv&apos;)</span>
+<span class="hljs-comment"># for data in tmp_data:</span>
+<span class="hljs-comment">#     os.remove(data)</span>
+</code></pre>
+<pre><code class="lang-python">dff = pd.read_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>)
+dff = dff.drop_duplicates()
+dff2 = pd.DataFrame(columns=[<span class="hljs-string">&apos;2&apos;</span>,<span class="hljs-string">&apos;3&apos;</span>,<span class="hljs-string">&apos;4&apos;</span>])
+dff = pd.concat([dff,dff2])
+dff.to_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>,index=<span class="hljs-keyword">False</span>)
+</code></pre>
+<pre><code class="lang-python"><span class="hljs-comment"># dff</span>
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+star1=[]
+star2=[]
+star3=[]
+list1=[]
+list2=[]
+
+
+num1=df[<span class="hljs-string">&apos;1&apos;</span>]
+<span class="hljs-comment"># for i in tqdm_notebook(range(0,len(df[&apos;1&apos;]))):</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">naver_movie_rating</span><span class="hljs-params">(code)</span>:</span>
+    df = pd.read_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>)
+    idx = np.where(df[<span class="hljs-string">&apos;1&apos;</span>]==code)
+
+    url1 = <span class="hljs-string">&quot;https://movie.naver.com/movie/bi/mi/basic.nhn?code=&quot;</span>
+    page1 = urlopen(url1+str(code)[:<span class="hljs-number">-2</span>])
+    soup1 = BeautifulSoup(page1, <span class="hljs-string">&quot;html.parser&quot;</span>)
+    b = soup1.find_all(<span class="hljs-string">&apos;span&apos;</span>,<span class="hljs-string">&apos;st_on&apos;</span>)
+<span class="hljs-comment">#     list1.append(df[&apos;1&apos;][i])</span>
+<span class="hljs-comment">#     list2.append(df[&apos;0&apos;][i])</span>
+<span class="hljs-comment">#     print(code)</span>
+    <span class="hljs-keyword">if</span>(len(b)&lt;<span class="hljs-number">3</span>):
+        df[<span class="hljs-string">&apos;2&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = <span class="hljs-number">0</span>
+        df[<span class="hljs-string">&apos;3&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = <span class="hljs-number">0</span>
+        df[<span class="hljs-string">&apos;4&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">if</span>(b[<span class="hljs-number">2</span>][<span class="hljs-string">&apos;style&apos;</span>][<span class="hljs-number">6</span>:<span class="hljs-number">-1</span>] == <span class="hljs-string">&apos;0&apos;</span>):
+            df[<span class="hljs-string">&apos;2&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = round(float(b[<span class="hljs-number">0</span>][<span class="hljs-string">&apos;style&apos;</span>][<span class="hljs-number">6</span>:<span class="hljs-number">-1</span>])/<span class="hljs-number">10</span>,<span class="hljs-number">2</span>)
+            df[<span class="hljs-string">&apos;3&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = <span class="hljs-number">0</span>
+            df[<span class="hljs-string">&apos;4&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = round(float(b[<span class="hljs-number">1</span>][<span class="hljs-string">&apos;style&apos;</span>][<span class="hljs-number">6</span>:<span class="hljs-number">-1</span>])/<span class="hljs-number">10</span>,<span class="hljs-number">2</span>)
+        <span class="hljs-keyword">else</span>:
+            df[<span class="hljs-string">&apos;2&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = round(float(b[<span class="hljs-number">0</span>][<span class="hljs-string">&apos;style&apos;</span>][<span class="hljs-number">6</span>:<span class="hljs-number">-1</span>])/<span class="hljs-number">10</span>,<span class="hljs-number">2</span>)
+            df[<span class="hljs-string">&apos;3&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = round(float(b[<span class="hljs-number">1</span>][<span class="hljs-string">&apos;style&apos;</span>][<span class="hljs-number">6</span>:<span class="hljs-number">-1</span>])/<span class="hljs-number">10</span>,<span class="hljs-number">2</span>)
+            df[<span class="hljs-string">&apos;4&apos;</span>][idx[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]] = round(float(b[<span class="hljs-number">2</span>][<span class="hljs-string">&apos;style&apos;</span>][<span class="hljs-number">6</span>:<span class="hljs-number">-1</span>])/<span class="hljs-number">10</span>,<span class="hljs-number">2</span>)
+
+    df.to_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>,index=<span class="hljs-keyword">False</span>)
+<span class="hljs-comment"># movie_dict2.append(list(zip(list1,list2,star1,star2,star3)))</span>
+</code></pre>
+<pre><code class="lang-python">df = pd.read_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>)
+<span class="hljs-keyword">for</span> code <span class="hljs-keyword">in</span> tqdm(df[<span class="hljs-string">&apos;1&apos;</span>]):
+    naver_movie_rating(code)
+</code></pre>
+<pre><code>  0%|          | 0/8 [00:00&lt;?, ?it/s]/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:24: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:25: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:26: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+ 25%|&#x2588;&#x2588;&#x258C;       | 2/8 [00:00&lt;00:02,  3.00it/s]/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:33: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:34: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:35: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+ 38%|&#x2588;&#x2588;&#x2588;&#x258A;      | 3/8 [00:01&lt;00:01,  2.97it/s]/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:29: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:30: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+/home/ubuntu/.local/lib/python3.6/site-packages/ipykernel_launcher.py:31: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+100%|&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;| 8/8 [00:02&lt;00:00,  2.97it/s]
+</code></pre><pre><code class="lang-python"><span class="hljs-comment"># import numpy as np</span>
+
+<span class="hljs-comment"># df = pd.read_csv(&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;)</span>
+<span class="hljs-comment"># url1 = &quot;https://movie.naver.com/movie/bi/mi/basic.nhn?code=&quot;</span>
+<span class="hljs-comment"># page1 = urlopen(url1+str(df[&apos;1&apos;][0])[:-2])</span>
+<span class="hljs-comment"># soup1 = BeautifulSoup(page1, &quot;html.parser&quot;)</span>
+<span class="hljs-comment"># b = soup1.find_all(&apos;span&apos;,&apos;st_on&apos;)</span>
+<span class="hljs-comment"># len(b)</span>
+</code></pre>
+<pre><code class="lang-python"><span class="hljs-comment"># from tqdm import tqdm</span>
+<span class="hljs-comment"># cpu = os.cpu_count()</span>
+<span class="hljs-comment"># df = pd.read_csv(&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;)</span>
+<span class="hljs-comment"># pool = multiprocessing.Pool(processes=cpu)</span>
+<span class="hljs-comment"># pool.map(naver_movie_rating,df[&apos;1&apos;])</span>
+<span class="hljs-comment"># pool.close()</span>
+<span class="hljs-comment"># pool.join()</span>
+</code></pre>
+<pre><code class="lang-python">
+
+</code></pre>
+<pre><code>922    144433.0
+923    158738.0
+924    158691.0
+925    158748.0
+926    159820.0
+927    167061.0
+928     76080.0
+929    164368.0
+Name: 1, dtype: float64
+</code></pre><pre><code class="lang-python"><span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+df = pd.read_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>)
+<span class="hljs-comment"># for i in tqdm_notebook(range(1,len(movie_dict2))):</span>
+<span class="hljs-comment">#     df = df.append(movie_dict2[i], ignore_index=True)</span>
+df2 = df.drop_duplicates()
+df2 = df2.reset_index(drop=<span class="hljs-keyword">True</span>)
+df2 = df2.rename(columns={df2.columns[<span class="hljs-number">0</span>]:<span class="hljs-string">&apos;movieNm&apos;</span>,df2.columns[<span class="hljs-number">1</span>]:<span class="hljs-string">&apos;naver_movieCd&apos;</span>, df2.columns[<span class="hljs-number">2</span>]:<span class="hljs-string">&apos;ntz_see_score&apos;</span>, df2.columns[<span class="hljs-number">3</span>]:<span class="hljs-string">&apos;spc_score&apos;</span>, df2.columns[<span class="hljs-number">4</span>]:<span class="hljs-string">&apos;ntz_score&apos;</span>})
+df2.to_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>,index=<span class="hljs-keyword">False</span>)
+</code></pre>
+<pre><code class="lang-python"><span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup
+<span class="hljs-keyword">from</span> urllib.request <span class="hljs-keyword">import</span> urlopen
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm
+<span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm_notebook
+<span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> date
+<span class="hljs-keyword">import</span> glob
+<span class="hljs-keyword">import</span> multiprocessing
+<span class="hljs-keyword">import</span> os
+code = <span class="hljs-number">132933.0</span>
+df = pd.read_csv(<span class="hljs-string">&apos;/home/ubuntu/movie/data/naver_boxoffice.csv&apos;</span>)
+idx = np.where(df[<span class="hljs-string">&apos;1&apos;</span>]==code)
+
+url1 = <span class="hljs-string">&quot;https://movie.naver.com/movie/bi/mi/basic.nhn?code=&quot;</span>
+page1 = urlopen(url1+str(code)[:<span class="hljs-number">-2</span>])
+soup1 = BeautifulSoup(page1, <span class="hljs-string">&quot;html.parser&quot;</span>)
+b = soup1.find_all(<span class="hljs-string">&apos;span&apos;</span>,<span class="hljs-string">&apos;st_on&apos;</span>)
+b
+</code></pre>
+<pre><code>[&lt;span class=&quot;st_on&quot; style=&quot;width:87.8%&quot;&gt;&#xAD00;&#xB78C;&#xAC1D; &#xD3C9;&#xC810; 8.78&#xC810;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:59.2%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:83.0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:0%&quot;&gt;0&#xC810;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; id=&quot;pointStarWide&quot; style=&quot;width:0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:87.8%&quot;&gt;&#xAD00;&#xB78C;&#xAC1D; &#xD3C9;&#xC810; 8.78&#xC810;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:59.2%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:83.0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:0%&quot;&gt;0&#xC810;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; id=&quot;pointStar&quot; style=&quot;width:0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:83.0%&quot;&gt;&#xD3C9;&#xC810; - &#xCD1D; 10&#xC810; &#xC911;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:59.2%&quot;&gt;&#xD3C9;&#xC810; - &#xCD1D; 10&#xC810; &#xC911;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:90.0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:100.0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:100.0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:100.0%&quot;&gt;&lt;/span&gt;,
+ &lt;span class=&quot;st_on&quot; style=&quot;width:80.0%&quot;&gt;&lt;/span&gt;]
+</code></pre><pre><code class="lang-python">
+
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="3.html" class="navigation navigation-prev " aria-label="Previous page: 3. KOBIS OPEN API">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="3-3.html" class="navigation navigation-next " aria-label="Next page: 5. 데이터 전처리">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"4. 네이버 OPEN API","level":"1.1.4","depth":2,"next":{"title":"5. 데이터 전처리","level":"1.1.5","depth":2,"path":"3-3.md","ref":"3-3.md","articles":[]},"previous":{"title":"3. KOBIS OPEN API","level":"1.1.3","depth":2,"path":"3.md","ref":"3.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"3-2.md","mtime":"2019-02-13T07:29:41.324Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-02-14T05:35:14.541Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

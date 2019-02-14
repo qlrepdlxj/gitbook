@@ -1,6 +1,6 @@
-# 주피터 노트북 설치 및 설정
+## 주피터 노트북 설치 및 설정
 
-## 주피터 설치 
+#### 주피터 설치 
 
 sudo apt-get update
 
@@ -14,7 +14,7 @@ sudo pip install --upgrade pip
 
 sudo pip install jupyter
 
-## 주피터 설정
+#### 주피터 설정
 
 jupyter notebook
 
@@ -22,7 +22,7 @@ jupyter notebook password
 
 jupyter notebook --generate-config
 
-## R커널 추가 설치
+#### R커널 추가 설치
 
 sudo apt-get install r-base r-base-dev
 
@@ -34,7 +34,7 @@ IRkernel::installspec()
 
 IRkernel::installspec(user = FALSE)
 
-## 부팅시 주피터 자동시작 (우분투 18.04 기준)
+#### 부팅시 주피터 자동시작 (우분투 18.04 기준)
 
 pip3 install --user jupyter jupyterlab
 
@@ -69,7 +69,7 @@ sudo systemctl stop jupyterNotebook
 
 sudo systemctl disable jupyterNotebook
 
-## 참고
+#### 참고
 
 http://yhzion.tistory.com/17
 
